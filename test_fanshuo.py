@@ -1,4 +1,4 @@
-"""返朔（FANSHUO）算子骨架单测：名帖完整、桩位齐整、只增不覆盖。"""
+"""返朔（FANSHUO）算子单测：名帖完整、行为达标、只增不覆盖。"""
 import unittest
 
 from fanshuo import Fanshuo
@@ -15,13 +15,11 @@ class TestFanshuo(unittest.TestCase):
         self.assertTrue(d["anchor"].startswith("Ω₀⊂⊙∞⊂Ω"))
         self.assertTrue(d["mingwen"])
 
-    def test_snapshot_stub(self):
-        with self.assertRaises(NotImplementedError):
-            self.op.snapshot(None)
-
-    def test_rollback_stub(self):
-        with self.assertRaises(NotImplementedError):
-            self.op.rollback(None)
+    def test_snapshot_rollback(self):
+        sid = self.op.snapshot({"v": 1})
+        self.assertEqual(self.op.rollback(sid), {"v": 1})
+        with self.assertRaises(KeyError):
+            self.op.rollback("SHUO-9999")
 
 
 if __name__ == "__main__":
