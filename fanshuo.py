@@ -5,12 +5,12 @@
 
 工程映射：版本回溯，快照回滚。
 
-边界：本件为算子骨架 v0——接口先立、实现随进化轮补齐；遵循元法第四条「只增不覆盖」，
+边界：本件为算子 v1——骨架桩已按命名映射补齐实现；遵循元法第四条「只增不覆盖」，
 方法只增不改名不删，行为变更走新版本；凭据不入档，宣称与事实分离。
 """
 
 class Fanshuo:
-    """返朔（FANSHUO）算子骨架 v0。"""
+    """返朔（FANSHUO）算子 v1。"""
 
     ANCHOR = "Ω₀⊂⊙∞⊂Ω｜DID-BR-000002"
     CODE = "FANSHUO"
@@ -18,6 +18,8 @@ class Fanshuo:
     def __init__(self, config=None):
         self.config = dict(config or {})
         self.events = []  # 只增不覆盖：会话内事件留痕
+        self.snapshots = {}
+        self._seq = 0
 
     def describe(self):
         """构件名帖：名、代号、职责、铭文、体系锚。"""
@@ -31,9 +33,19 @@ class Fanshuo:
         }
 
     def snapshot(self, state):
-        """拍快照留朔，返回朔号（骨架桩：实现随进化轮补齐）。"""
-        raise NotImplementedError("FANSHUO.snapshot 骨架桩，候进化轮补齐")
+        """拍快照留朔，返回朔号。"""
+        import json
+        self._seq += 1
+        sid = "SHUO-%04d" % self._seq
+        self.snapshots[sid] = json.dumps(state, ensure_ascii=False, sort_keys=True)
+        self.events.append({"event": "snapshot", "sid": sid})
+        return sid
 
     def rollback(self, sid):
-        """返朔归元：回滚到指定朔号（骨架桩：实现随进化轮补齐）。"""
-        raise NotImplementedError("FANSHUO.rollback 骨架桩，候进化轮补齐")
+        """返朔归元：回滚到指定朔号。"""
+        import json
+        if sid not in self.snapshots:
+            raise KeyError("无此朔号： %s" % sid)
+        state = json.loads(self.snapshots[sid])
+        self.events.append({"event": "rollback", "sid": sid})
+        return state
